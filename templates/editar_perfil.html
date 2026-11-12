@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Editar perfil - MiniRed{% endblock %}
+{% block content %}
+<div class="tarjeta">
+  <h1>Editar mi perfil</h1>
+  <p class="nota">Formulario clásico (POST <code>/perfil/editar</code>). Es el objetivo del ataque CSRF.</p>
+  <form method="post">
+    {# [FIX-CSRF] Token secreto. En modo vulnerable el servidor no lo verifica. #}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Nombre visible <input name="display_name" value="{{ yo.display_name }}"></label>
+    <label>Email <input name="email" type="email" value="{{ yo.email }}"></label>
+    <label>Bio <textarea name="bio" rows="3">{{ yo.bio }}</textarea></label>
+    <button type="submit">Guardar</button>
+  </form>
+</div>
+{% endblock %}

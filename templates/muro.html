@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Muro - MiniRed{% endblock %}
+{% block content %}
+<div class="tarjeta">
+  <h1>Muro</h1>
+  <form method="post" action="{{ url_for('publicar') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <textarea name="content" rows="3" placeholder="¿Qué estás pensando?" required></textarea>
+    <button type="submit">Publicar</button>
+  </form>
+</div>
+
+{% for p in posts %}
+<article class="tarjeta post">
+  <div class="meta">
+    <a href="{{ url_for('ver_perfil', id=p.autor_id) }}"><strong>{{ p.display_name }}</strong></a>
+    <small>#{{ p.id }} · {{ p.created_at }}</small>
+  </div>
+  <div class="contenido">
+    {% if seguro %}
+      {# [FIX-XSS] Jinja escapa el contenido: <script> se muestra como texto #}
+      {{ p.content }}
+    {% else %}
+      {# [VULN-XSS] |safe desactiva el escapado: el HTML/JS del usuario se ejecuta en el navegador de quien lo lee #}
+      {{ p.content|safe }}
+    {% endif %}
+  </div>
+</article>
+{% endfor %}
+{% endblock %}

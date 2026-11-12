@@ -1,0 +1,11 @@
+# Base de datos (se crea sola al ejecutar app.py)
+minired.db
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs
+*.log

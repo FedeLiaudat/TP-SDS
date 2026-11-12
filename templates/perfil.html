@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Perfil - MiniRed{% endblock %}
+{% block content %}
+<div class="tarjeta" id="perfil-api" data-uid="{{ uid }}">
+  <h1>Perfil del usuario <span id="perfil-id">{{ uid }}</span></h1>
+  <p class="nota">Esta página consulta la API <code>GET /api/users/&lt;id&gt;</code> con el id que figura en la URL
+    (<code>/perfil?id={{ uid }}</code>). Probá cambiarlo.</p>
+
+  <form id="ir-a-id" class="en-linea">
+    <label>Ver id <input id="otro-id" type="number" min="1" value="{{ uid }}"></label>
+    <button type="submit">Ir</button>
+  </form>
+
+  <h2>Respuesta de la API</h2>
+  <pre id="perfil-json">Cargando...</pre>
+
+  <h2>Editar vía API</h2>
+  <p class="nota"><code>PUT /api/users/{{ uid }}</code> con JSON.</p>
+  <form id="form-api">
+    <label>Nombre visible <input name="display_name"></label>
+    <label>Bio <textarea name="bio" rows="2"></textarea></label>
+    <label>Email <input name="email"></label>
+    <label>Teléfono <input name="telefono"></label>
+    <button type="submit">Guardar vía API</button>
+  </form>
+  <pre id="put-resultado"></pre>
+</div>
+{% endblock %}
