@@ -8,37 +8,48 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="modo {{ 'seguro' if seguro else 'vulnerable' }}">
-    <span>Modo actual: <strong>{{ 'SEGURO' if seguro else 'VULNERABLE' }}</strong></span>
-    <form method="post" action="{{ url_for('cambiar_modo') }}">
-      <button type="submit">Cambiar a {{ 'VULNERABLE' if seguro else 'SEGURO' }}</button>
-    </form>
-    <form method="post" action="{{ url_for('reset_db') }}">
-      <button type="submit" class="secundario">Reiniciar BD</button>
-    </form>
-  </div>
+  {% if yo %}
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="logo" href="{{ url_for('muro') }}">
+        <span class="logo-mark">m</span>
+        <span class="logo-text">MiniRed</span>
+      </a>
 
-  <header>
-    <a class="logo" href="{{ url_for('muro') }}">MiniRed</a>
-    {% if yo %}
-    <nav>
-      <a href="{{ url_for('muro') }}">Muro</a>
-      <a href="{{ url_for('ver_perfil') }}">Mi perfil</a>
-      <a href="{{ url_for('editar_perfil') }}">Editar perfil</a>
-      <a href="{{ url_for('usuarios') }}">Usuarios</a>
-      <a href="{{ url_for('sqli_lab') }}">Lab SQLi</a>
-    </nav>
-    <div class="quien">
-      {{ yo.display_name }} <small>(id {{ yo.id }})</small>
-      <form method="post" action="{{ url_for('logout') }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button type="submit" class="link">Salir</button>
-      </form>
+      <nav class="nav">
+        <a href="{{ url_for('muro') }}" title="Muro">Muro</a>
+        <a href="{{ url_for('usuarios') }}" title="Usuarios">Usuarios</a>
+        <a href="{{ url_for('sqli_lab') }}" title="Lab SQLi">Lab SQLi</a>
+      </nav>
+
+      <div class="topbar-right">
+        <form method="post" action="{{ url_for('cambiar_modo') }}" class="inline">
+          <button type="submit" class="pill {{ 'pill-seguro' if seguro else 'pill-vuln' }}"
+                  title="Clic para cambiar de modo">
+            <span class="dot"></span>{{ 'SEGURO' if seguro else 'VULNERABLE' }}
+          </button>
+        </form>
+        <form method="post" action="{{ url_for('reset_db') }}" class="inline">
+          <button type="submit" class="icon-btn" title="Reiniciar base de datos">&#8635;</button>
+        </form>
+
+        <div class="user-menu">
+          <a href="{{ url_for('ver_perfil') }}" class="avatar" title="Mi perfil">{{ yo.display_name[0]|upper }}</a>
+          <div class="user-name">
+            <a href="{{ url_for('ver_perfil') }}">{{ yo.display_name }}</a>
+            <small>id {{ yo.id }}</small>
+          </div>
+          <form method="post" action="{{ url_for('logout') }}" class="inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="icon-btn" title="Salir">&#x23FB;</button>
+          </form>
+        </div>
+      </div>
     </div>
-    {% endif %}
   </header>
+  {% endif %}
 
-  <main>
+  <main class="{{ 'with-topbar' if yo else '' }}">
     {% with msgs = get_flashed_messages() %}
       {% for m in msgs %}<div class="flash">{{ m }}</div>{% endfor %}
     {% endwith %}

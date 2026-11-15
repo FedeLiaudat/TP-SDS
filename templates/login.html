@@ -1,23 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Ingresar - MiniRed{% endblock %}
 {% block content %}
-<div class="tarjeta angosta">
-  <h1>Ingresar</h1>
-  <form method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>Usuario <input name="username" autocomplete="username" required></label>
-    <label>Contraseña <input name="password" type="password" autocomplete="current-password" required></label>
-    <button type="submit">Entrar</button>
-  </form>
-</div>
+<div class="auth">
+  <div class="auth-brand">
+    <div class="logo logo-big"><span class="logo-mark">m</span><span class="logo-text">MiniRed</span></div>
+    <p>Una mini red social para analizar vulnerabilidades web en un entorno controlado.</p>
+  </div>
 
-<div class="tarjeta angosta">
-  <h2>Usuarios de prueba</h2>
-  <table>
-    <tr><th>Usuario</th><th>Contraseña</th><th>Rol en la demo</th></tr>
-    {% for u in usuarios %}
-    <tr><td>{{ u[0] }}</td><td><code>{{ u[1] }}</code></td><td>{{ 'atacante' if u[0] == 'mallory' else ('víctima' if u[0] in ('alice', 'bob') else 'admin') }}</td></tr>
-    {% endfor %}
-  </table>
+  <div class="auth-forms">
+    <div class="card auth-card">
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input name="username" placeholder="Usuario" autocomplete="username" required>
+        <input name="password" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+        <button type="submit" class="btn-block">Entrar</button>
+      </form>
+    </div>
+
+    <div class="card auth-card">
+      <h2 class="auth-sub">Usuarios de prueba</h2>
+      <table class="mini-table">
+        <tr><th>Usuario</th><th>Contraseña</th><th>Rol</th></tr>
+        {% for u in usuarios %}
+        <tr><td>{{ u[0] }}</td><td><code>{{ u[1] }}</code></td>
+          <td>{{ 'atacante' if u[0] == 'mallory' else ('víctima' if u[0] in ('alice', 'bob') else 'admin') }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
 </div>
 {% endblock %}

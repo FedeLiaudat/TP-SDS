@@ -26,6 +26,9 @@ DB_PATH = BASE_DIR / "minired.db"
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "clave-fija-solo-para-la-demo"
+# Recargar plantillas al vuelo (comodo durante el desarrollo de la demo)
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.jinja_env.auto_reload = True
 # Modo global de la demo. Arranca VULNERABLE salvo que se pase MODO_SEGURO=1
 app.config["MODO_SEGURO"] = os.environ.get("MODO_SEGURO") == "1"
 
