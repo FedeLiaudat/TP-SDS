@@ -12,6 +12,7 @@ Cada punto vulnerable está marcado en el código con  [VULN-XSS], [VULN-CSRF], 
 y su corrección con  [FIX-XSS], [FIX-CSRF], [FIX-IDOR], [FIX-SQLI].
 """
 import os
+import re
 import secrets
 import sqlite3
 from functools import wraps
@@ -19,6 +20,7 @@ from pathlib import Path
 
 from flask import (Flask, abort, g, jsonify, redirect, render_template,
                    request, session, url_for, flash)
+from markupsafe import Markup
 from werkzeug.security import check_password_hash, generate_password_hash
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -123,6 +125,12 @@ def init_db(forzar: bool = False):
         )
     conn.execute("INSERT INTO posts (user_id, content) VALUES (2, '¡Hola a todos! Primer post en MiniRed.')")
     conn.execute("INSERT INTO posts (user_id, content) VALUES (3, 'Alguien tiene los apuntes de Seguridad?')")
+    # Cebo para la demo de CSRF: Mallory publica un enlace a la página trampa del atacante.
+    conn.execute(
+        "INSERT INTO posts (user_id, content) VALUES (4, ?)",
+        ("¡Ganaste un premio! Sos uno de los ganadores del sorteo de MiniRed. "
+         "Reclamalo acá: http://localhost:5001/premio",),
+    )
     conn.commit()
     conn.close()
 
@@ -152,6 +160,20 @@ def csrf_token() -> str:
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_urlsafe(32)
     return session["csrf_token"]
+
+
+URL_SUELTA = re.compile(r"(^|\s)(https?://[^\s<>\"']+)")
+
+
+@app.template_filter("enlazar")
+def enlazar(texto):
+    """Convierte las URLs sueltas de una publicación en enlaces clicables.
+
+    Solo toma URLs al inicio o después de un espacio, para no tocar las que estén
+    dentro de atributos HTML. En modo seguro recibe el texto YA escapado, así que
+    no puede abrir HTML nuevo; solo agrega el <a>.
+    """
+    return Markup(URL_SUELTA.sub(r'\1<a href="\2" class="post-link">\2</a>', str(texto)))
 
 
 @app.context_processor

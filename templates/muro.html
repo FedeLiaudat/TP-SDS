@@ -28,10 +28,10 @@
     <div class="post-body">
       {% if seguro %}
         {# [FIX-XSS] Jinja escapa el contenido: <script> se muestra como texto #}
-        {{ p.content }}
+        {{ p.content|e|enlazar }}
       {% else %}
         {# [VULN-XSS] |safe desactiva el escapado: el HTML/JS del usuario se ejecuta #}
-        {{ p.content|safe }}
+        {{ p.content|enlazar|safe }}
       {% endif %}
     </div>
   </article>
