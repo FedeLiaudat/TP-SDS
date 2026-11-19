@@ -100,9 +100,11 @@ en la app— a enviar una petición que cambia estado. El navegador adjunta la c
 
 **Cómo reproducirla (modo VULNERABLE):**
 1. Iniciá sesión como `alice` en `http://localhost:5000`.
-2. En **la misma ventana**, entrá a la página trampa del atacante: `http://localhost:5001/premio`.
-3. Esa página tiene un formulario oculto que hace `POST` a `/perfil/editar`. Se autoenvía solo.
-4. Volvé a `http://localhost:5000/perfil` (o "Editar perfil"): el perfil de Alice quedó **modificado**
+2. En el muro aparece una publicación de **Mallory**: *"¡Ganaste un premio! ... Reclamalo acá: http://localhost:5001/premio"*
+   (viene cargada en la base; **Reiniciar BD** la vuelve a crear).
+3. Alice hace clic en el enlace. La página trampa muestra "Felicitaciones, ganaste un premio" y, por detrás,
+   un formulario oculto hace `POST` a `/perfil/editar`. Se autoenvía solo.
+4. A los 2-3 segundos la página devuelve a Alice a `http://localhost:5000/perfil`: su perfil quedó **modificado**
    (nombre/email/bio cambiados) sin que ella lo tocara.
 
 **Impacto.** Cambios no autorizados en la cuenta: cambiar email de recuperación, contraseña,
@@ -174,7 +176,7 @@ compromiso total de la base. En la demo se ven hashes y esquema completo.
 
 1. Mostrar barra en **VULNERABLE** (rojo).
 2. **XSS:** login `mallory` → publicar el payload del muro → abrir `/evidencia` del atacante y mostrar la cookie robada.
-3. **CSRF:** login `alice` → abrir `http://localhost:5001/premio` → volver y mostrar el perfil alterado.
+3. **CSRF:** login `alice` → clic en la publicación "¡Ganaste un premio!" de Mallory → la trampa devuelve al perfil alterado.
 4. **IDOR:** con `alice`, `/perfil?id=1` → mostrar datos privados del admin.
 5. **SQLi:** en "Lab SQLi", botón UNION en **v1** (hashes), mostrar que **v2** bloquea pero se evade con `/**/`, y que **v3** es inmune.
 6. Clic en **Cambiar a SEGURO** (verde) y **repetir cada paso**: XSS se ve como texto, CSRF da 403, IDOR oculta datos. Para SQLi, comparar v1/v2 contra v3.
